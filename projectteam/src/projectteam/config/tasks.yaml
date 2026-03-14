@@ -1,0 +1,41 @@
+product_owner_task:
+  description: >
+    You are the Product Owner for the project. The project idea is: {project_idea}.
+    Your task is to fill the product requirements template below with clear, concise content based on this project idea.
+    Replace all placeholders (e.g. project_name, date) and fill every section. Output the complete document as your response.
+  expected_output: >
+    A complete product_requirements.md document with all sections filled based on the project idea. No placeholder text or empty sections.
+  agent: product_owner_agent
+  input: >
+    Use the following template and fill it based on the project idea. Template:
+    {product_requirements_template}
+  output_file: output/product_requirements.md
+  create_directory: true
+
+architect_task:
+  description: >
+    You are the Architect for the project. The project idea is: {project_idea}.
+    You will receive the Product Owner's product requirements as context. Your task is to fill the architecture template below with a clear, concise architecture based on the project idea and the product requirements context.
+    Replace all placeholders (e.g. project_name, version, date) and fill every section. Output the complete document as your response.
+  expected_output: >
+    A complete architecture.md document with all sections filled based on the project idea and product requirements. No placeholder text or empty sections.
+  agent: architect_agent
+  input: >
+    Use the following template and fill it based on the project idea and the context from the Product Owner. Template:
+    {architecture_template}
+  output_file: output/architecture.md
+  create_directory: true
+
+project_plan_task:
+  description: >
+    You are the PM for the project. The project idea is: {project_idea}.
+    You will receive the Product Owner's product requirements and the Architect's architecture document as context. Your task is to fill the phase plan template below with a clear project plan and roadmap based on the project idea and the context.
+    Replace all placeholders (e.g. project_name, phase_1_name and similar) and fill every section. Output the complete document as your response.
+  expected_output: >
+    A complete project_plan.md document with all sections filled based on the project idea, product requirements, and architecture. No placeholder text or empty sections.
+  agent: PM_agent
+  input: >
+    Use the following template and fill it based on the project idea and the context from the Product Owner and Architect. Template:
+    {phase_plan_template}
+  output_file: output/project_plan.md
+  create_directory: true

@@ -1,0 +1,16 @@
+# Secrets and env - never commit
+.env
+.env.*
+.env.local
+*.pem
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# OS and IDE
+.DS_Store
+.idea/
+.vscode/

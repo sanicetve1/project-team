@@ -1,0 +1,440 @@
+# Project Roadmap and Phase Plan
+
+## 1. Document Overview
+
+### Project Name
+{{project_name}}
+
+### Version
+{{version}}
+
+### Author
+{{author}}
+
+### Date
+{{date}}
+
+### Purpose
+Describe the purpose of this document.
+
+Example:
+This document defines the implementation roadmap for the project in a phased, step-by-step manner. It translates product requirements into a simple, logical delivery plan that development teams can execute incrementally.
+
+### Scope
+Included:
+- implementation phases
+- feature grouping
+- logical build order
+- dependencies
+- milestone outcomes
+
+Excluded:
+- detailed sprint board
+- detailed technical design
+- detailed test cases
+- resource staffing model
+
+---
+
+## 2. Project Summary
+
+### Business Goal
+Summarize the business outcome the project is trying to achieve.
+
+### Product Scope
+Summarize what is being built.
+
+### Delivery Objective
+State what success looks like for implementation.
+
+Example:
+Deliver a usable MVP in a small number of logical phases, with each phase producing a working increment of the product.
+
+---
+
+## 3. Planning Principles
+
+Use these principles to shape the roadmap.
+
+- build in small usable increments
+- deliver core user journey first
+- reduce dependencies early
+- avoid parallel complexity in initial phases
+- validate core business flow before enhancements
+- keep each phase outcome measurable
+- defer non-essential features to later phases
+
+---
+
+## 4. Assumptions
+
+List planning assumptions.
+
+Examples:
+- requirements are stable for MVP
+- architecture baseline is available
+- delivery team has required skills
+- dependencies on third-party systems are manageable
+- environments can be provisioned on time
+
+---
+
+## 5. Constraints
+
+List project constraints.
+
+Examples:
+- fixed MVP timeline
+- limited team size
+- budget limits
+- preferred tech stack
+- compliance or approval dependencies
+
+---
+
+## 6. Phase Planning Approach
+
+### Phase Design Method
+Phases should be created using this order:
+
+1. foundation
+2. core business flow
+3. supporting workflows
+4. admin / reporting / controls
+5. optimization / hardening / future enhancements
+
+### Phase Design Rules
+- each phase must produce a usable outcome
+- each phase should be small and logically grouped
+- each phase should minimize rework
+- avoid mixing unrelated business capabilities in one phase
+- keep dependencies explicit
+
+---
+
+## 7. High-Level Roadmap
+
+List all phases at a summary level.
+
+| Phase | Name | Goal | Outcome |
+|------|------|------|---------|
+| Phase 1 | {{phase_1_name}} | {{phase_1_goal}} | {{phase_1_outcome}} |
+| Phase 2 | {{phase_2_name}} | {{phase_2_goal}} | {{phase_2_outcome}} |
+| Phase 3 | {{phase_3_name}} | {{phase_3_goal}} | {{phase_3_outcome}} |
+| Phase 4 | {{phase_4_name}} | {{phase_4_goal}} | {{phase_4_outcome}} |
+
+---
+
+## 8. Detailed Phase Template
+
+Repeat this section for each phase.
+
+### Phase Number and Name
+{{phase_number}} - {{phase_name}}
+
+### Phase Objective
+Describe what this phase is meant to achieve.
+
+### Why This Phase Comes Now
+Explain why this phase is sequenced here.
+
+Example:
+This phase establishes the foundation required for all user-facing workflows and reduces downstream rework.
+
+### In Scope
+List the features / capabilities included in this phase.
+
+- {{feature_1}}
+- {{feature_2}}
+- {{feature_3}}
+
+### Out of Scope
+List what is intentionally excluded from this phase.
+
+- {{excluded_feature_1}}
+- {{excluded_feature_2}}
+
+### Business Use Cases Covered
+List the use cases delivered by this phase.
+
+- {{use_case_1}}
+- {{use_case_2}}
+
+### Key Deliverables
+List the expected deliverables.
+
+- {{deliverable_1}}
+- {{deliverable_2}}
+- {{deliverable_3}}
+
+### Dependencies
+List dependencies for this phase.
+
+Examples:
+- architecture sign-off
+- environment readiness
+- auth service available
+- core data model complete
+
+### Risks
+List key risks for this phase.
+
+Examples:
+- integration delay
+- unclear requirement detail
+- shared dependency not ready
+
+### Entry Criteria
+What must be true before this phase starts.
+
+Examples:
+- product requirements approved
+- architecture baseline available
+- repo and environments initialized
+
+### Exit Criteria
+What must be true to call this phase complete.
+
+Examples:
+- in-scope features implemented
+- core scenarios tested
+- phase deliverables demoed
+- open critical defects resolved
+
+### Milestone Outcome
+Describe the concrete result at the end of the phase.
+
+Example:
+Users can sign in, create a profile, and access the main dashboard.
+
+---
+
+## 9. Recommended Simple Phase Structure
+
+Use this as the default pattern unless the domain requires otherwise.
+
+### Phase 1 - Foundation
+Goal:
+Set up the technical and product foundation.
+
+Typical scope:
+- project setup
+- environments
+- authentication / user identity
+- basic navigation / structure
+- core data model baseline
+
+Typical outcome:
+A working foundation that users can access and teams can build upon.
+
+---
+
+### Phase 2 - Core Business Journey
+Goal:
+Deliver the main user workflow end to end.
+
+Typical scope:
+- primary user action
+- create / update core records
+- essential validation
+- basic persistence
+- basic success / failure handling
+
+Typical outcome:
+The main business use case works end to end.
+
+---
+
+### Phase 3 - Supporting Workflows
+Goal:
+Add the next most important supporting journeys.
+
+Typical scope:
+- history / retrieval / search
+- secondary workflows
+- user self-service actions
+- business rules expansion
+- basic notifications if needed
+
+Typical outcome:
+The product is usable beyond the initial happy path.
+
+---
+
+### Phase 4 - Admin / Operational Controls
+Goal:
+Enable support, control, and operational visibility.
+
+Typical scope:
+- admin screens / endpoints
+- management features
+- operational reports
+- access controls
+- audit support
+
+Typical outcome:
+Operations and support teams can manage the product.
+
+---
+
+### Phase 5 - Hardening / Enhancement
+Goal:
+Stabilize, improve, and prepare for broader rollout.
+
+Typical scope:
+- performance improvements
+- observability improvements
+- security hardening
+- UX refinements
+- deferred enhancements
+
+Typical outcome:
+The solution is more stable, supportable, and ready for scale.
+
+---
+
+## 10. Feature-to-Phase Mapping
+
+Map features to phases.
+
+| Feature / Capability | Phase | Priority | Notes |
+|----------------------|-------|----------|------|
+| {{feature_name}} | {{phase}} | {{priority}} | {{notes}} |
+
+---
+
+## 11. Use Case-to-Phase Mapping
+
+Map business use cases to phases.
+
+| Use Case | Phase | Reason |
+|----------|-------|--------|
+| {{use_case_name}} | {{phase}} | {{reason}} |
+
+---
+
+## 12. Dependency Plan
+
+List key dependencies across phases.
+
+| Dependency | Needed By Phase | Owner | Status | Notes |
+|------------|-----------------|-------|--------|------|
+| {{dependency_name}} | {{phase}} | {{owner}} | {{status}} | {{notes}} |
+
+---
+
+## 13. Milestone Plan
+
+Define milestone checkpoints.
+
+| Milestone | Related Phase | Success Measure |
+|-----------|---------------|-----------------|
+| {{milestone_name}} | {{phase}} | {{measure}} |
+
+Examples:
+- foundation ready
+- core workflow demo complete
+- MVP feature set complete
+- admin operations ready
+- release readiness sign-off
+
+---
+
+## 14. MVP Definition
+
+### MVP Goal
+Describe the smallest usable product version.
+
+### MVP Included Features
+- {{mvp_feature_1}}
+- {{mvp_feature_2}}
+- {{mvp_feature_3}}
+
+### MVP Excluded Features
+- {{excluded_feature_1}}
+- {{excluded_feature_2}}
+
+### MVP Completion Criteria
+Examples:
+- primary user journey works end to end
+- critical business rules enforced
+- basic operational support exists
+- no critical defects blocking usage
+
+---
+
+## 15. Release Strategy
+
+### Release Approach
+Examples:
+- single MVP release
+- phased internal release
+- pilot release followed by broader rollout
+
+### Suggested Release Units
+Examples:
+- internal alpha after Phase 2
+- pilot release after Phase 3
+- production MVP after Phase 4
+
+### Rollout Considerations
+Examples:
+- limited user group first
+- staged enablement by region / tenant / group
+- operational support readiness before full release
+
+---
+
+## 16. Risks and Mitigation
+
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| {{risk_name}} | {{impact}} | {{mitigation}} |
+
+Examples:
+- unclear requirement detail
+- integration delays
+- data migration issues
+- environment provisioning delays
+- underestimation of core workflow effort
+
+---
+
+## 17. Open Questions
+
+List open items requiring clarification.
+
+- {{question_1}}
+- {{question_2}}
+- {{question_3}}
+
+Examples:
+- is reporting required in MVP?
+- do we need approval workflows in phase 1?
+- are notifications mandatory for the first release?
+
+---
+
+## 18. Final Delivery Summary
+
+### Recommended Build Order
+List the final implementation sequence.
+
+1. {{step_1}}
+2. {{step_2}}
+3. {{step_3}}
+4. {{step_4}}
+5. {{step_5}}
+
+### Delivery Recommendation
+Provide a short delivery recommendation.
+
+Example:
+Start with a strong foundation, then deliver the core business flow quickly, followed by supporting workflows and operational controls. Keep early phases narrow and domain-focused to reduce complexity and enable fast feedback.
+
+### Definition of Phase Success
+A phase is successful when:
+- the in-scope use cases work
+- entry and exit criteria are met
+- the milestone outcome is demonstrated
+- dependencies for the next phase are cleared
