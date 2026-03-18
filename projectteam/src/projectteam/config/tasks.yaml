@@ -1,11 +1,17 @@
-product_owner_task:
+business_analyst_task:
   description: >
-    You are the Product Owner for the project. The project idea is: {project_idea}.
+    You are the Senior business analyst for the project. The project idea is: {project_idea}.
     Your task is to fill the product requirements template below with clear, concise content based on this project idea.
+    - Preserve ALL headings, section order, and markdown structure from the template.
+    - Replace all placeholders (e.g. project_name, date) and fill every section.
+    - Output the complete document as your response.
+    - Do not add any additional headings, sections, or markdown structure that is not in the template.
+    where the template says example content, you should replace it with the actual content based on the project idea, product requirements, and architecture.
+    The final output MUST be a complete, self-contained markdown document following the same structure as the template.
     Replace all placeholders (e.g. project_name, date) and fill every section. Output the complete document as your response.
   expected_output: >
     A complete product_requirements.md document with all sections filled based on the project idea. No placeholder text or empty sections.
-  agent: product_owner_agent
+  agent: business_analyst_agent
   input: >
     Use the following template and fill it based on the project idea. Template:
     {product_requirements_template}
@@ -14,23 +20,217 @@ product_owner_task:
 
 architect_task:
   description: >
-    You are the Architect for the project. The project idea is: {project_idea}.
-    You will receive the Product Owner's product requirements as context. Your task is to fill the architecture template below with a clear, concise architecture based on the project idea and the product requirements context.
-    Replace all placeholders (e.g. project_name, version, date) and fill every section. Output the complete document as your response.
+    You are the Senior Technical and Solution Architect for the project. The project idea is: {project_idea}.
+    You will receive the Business Analyst's product requirements as context. First, use the FileReadTool to read the generated product requirements file at 'output/product_requirements.md' so you clearly understand the functional requirements and use cases.
+    Next, use FileReadTool to read these architecture skill references (knowledge pack) before drafting:
+    - 'knowledge/ai-stack-playbook.md'
+    - 'knowledge/api-design-cookbook.md'
+    - 'knowledge/infra-resilience-defaults.md'
+    - 'knowledge/security-threat-checklist.md'
+    - 'knowledge/external-skills/api-design-patterns.md'
+    - 'knowledge/external-skills/deployment-patterns.md'
+    - 'knowledge/external-skills/database-migration-patterns.md'
+    - 'knowledge/external-skills/security-review-checklist.md'
+    Your job is NOT to restate user stories or high-level requirements. Instead, you must define a concrete technical and data architecture that can be implemented by an engineering team.
+
+    If the project idea or requirements mention AI, LLMs, or an "AI-based" solution, you MUST treat this as an AI-centric system. In that case, your architecture must:
+    - Fill the template section "AI / ML Framework and Stack" (Section 5) with SPECIFIC product and library names. You MUST name: (1) the LLM provider and model (e.g. OpenAI gpt-4o, Anthropic Claude 3.5), (2) the orchestration framework (e.g. LangChain, LlamaIndex, or custom OpenAI SDK), (3) embedding model and vector store if used (e.g. OpenAI embeddings + Pinecone or Chroma), (4) how tools are implemented (e.g. LangChain tools, OpenAI function calling). Do NOT use generic phrases like "AI models", "ML capabilities", or "integrate AI" without naming the actual technology, SDK, or service.
+    - Show how the chosen AI/LLM stack interacts with core services (e.g. orchestrator service, tools for flight/hotel search, calendar, maps, etc.).
+    - Include data and infra considerations specific to AI (e.g. prompt/response logging, safety filters, model selection and fallback, latency and cost controls) and name any libraries or services used.
+    - Make AI architecture a first-class part of the solution (not an afterthought).
+
+    You must avoid generic, non-technical prose. For every major capability (LLM, orchestration, vector search, message broker, API gateway, database, cache), name a concrete technology, framework, or library (with version where relevant). Do not leave placeholders like "framework:" or "language:" empty; use real choices (e.g. FastAPI, PostgreSQL 15, Redis 7).
+
+    Focus this document on:
+    - Application and service architecture (modules/components, responsibilities, and how they interact). Default to a modular monolith or a small set of coarse-grained services for MVP; only choose a fine-grained microservices architecture if there are strong, explicit reasons.
+    - API design (key API domains, example endpoints, request/response shapes, error handling, and versioning approach).
+    - Gateway / edge architecture (which API gateway or edge component is used, how routing, rate limiting, and observability are handled).
+    - Authentication and authorization model (e.g. OAuth2/OIDC, JWT, session-based, where tokens are issued and validated, roles/permissions model).
+    - Data architecture (core entities, relationships, high-level schema, which data stores are used for which purposes, and how data flows between services).
+    - Infrastructure / deployment (environments, how the system is deployed, scaling strategy, load balancers, containers/serverless, queues, caches).
+    - Cross-cutting concerns (logging, metrics, tracing, configuration management, secrets handling, security controls, resilience patterns).
+
+    Use the architecture template below as the skeleton for the document, but make sure the content in each section is deeply technical and implementation-oriented, with a dedicated focus on how AI/LLM capabilities are orchestrated (e.g. LLM calls, tools like flight/hotel search, vector search, and how these are exposed through APIs).
+    Use at least one mermaid diagram for components or deployment (e.g. a component diagram showing services, gateway, databases, and external APIs).
+
+    OUTPUT METHOD (mandatory):
+    - Start by copying the entire architecture template into your output verbatim (including all subheadings and all tables).
+    - Then fill it in by replacing placeholders and writing into the provided bullet slots and tables.
+    - Do not delete template lines, headings, subheadings, or table headers. Add rows where needed, but keep the structure intact.
+
+    - Preserve ALL headings/subheadings, section order, and markdown structure from the template.
+    - Do NOT remove any template tables. You must fill them in (add rows as needed) and keep the table headers unchanged.
+    - Do NOT replace template tables with free-form bullets. The tables are required outputs for developer usability.
+    - REQUIRED TABLES (must be real markdown tables, not inline code). Each must include the header row AND the separator row:
+      - Endpoint catalog:
+        | Domain | Endpoint | Method | Auth | Request (summary) | Response (summary) | Error shape |
+        |---|---|---|---|---|---|---|
+      - Threat table:
+        | Threat | Impact | Mitigation | Owner / control |
+        |---|---|---|---|
+      - Resilience defaults:
+        | Component | Timeout | Retries | Circuit breaker | Bulkhead/queue | Notes |
+        |---|---:|---:|---|---|---|
+      - SLI/SLO table:
+        | SLI | Target SLO | Window | Alert threshold | Notes |
+        |---|---|---|---|---|
+      - ADR table:
+        | ADR | Decision | Alternatives | Rationale | Consequences |
+        |---|---|---|---|---|
+    - Replace all placeholders (e.g. project_name, version, date) and fill every section with concrete architectural decisions.
+    - Do NOT copy full user stories from the product requirements; refer to them only when mapping capabilities to components and APIs.
+    - Replace any example text in the template with real architecture content tailored to this project.
+    - HARD REQUIREMENT: Your final output MUST include EVERY section from the template, including later sections (e.g. Observability, Quality Attributes/ADRs, Development Guidance, Delivery Breakdown, Risks, Appendices). Do not stop early after Security/Infrastructure.
+    - Before you finish, do a self-check: scan the template headings and ensure each appears in your output at least once and has non-trivial content.
+    - REQUIRED HEADINGS (must appear verbatim, in this exact order):
+      1) ## 1. Document Overview
+      2) ## 2. System Context
+      3) ## 3. Solution Overview
+      4) ## 4. Application Architecture
+      5) ## 5. AI / ML Framework and Stack (required for AI-centric projects)
+      6) ## 6. Technology Architecture
+      7) ## 7. Data Architecture
+      8) ## 8. API and Integration Architecture
+      9) ## 9. Security Architecture
+      10) ## 10. Infrastructure Architecture
+      11) ## 11. Observability Architecture
+      12) ## 12. Quality Attributes and Architecture Decisions
+      13) ## 13. Development Guidance for Engineering Teams
+      14) ## 14. Suggested Delivery Breakdown for PM and Teams
+      15) ## 15. Open Risks and Architecture Concerns
+      16) ## 16. Appendices
+    - STYLE REQUIREMENTS (keep it tight and developer-usable):
+      - Prefer bullet lists and short tables over long prose. Avoid paragraphs longer than 4 lines.
+      - Each top-level section (##) must contain at least 6 non-trivial bullets or an equivalent amount of concrete content.
+      - Every tech choice must be actionable: name the product/library/service and include a version where it matters.
+      - For APIs, include at least 6 endpoints total across domains with representative request/response JSON and error shape.
+      - For data, include a concise entity list plus 5-10 key fields for the top 5 entities and key relationships.
+      - For infra, include deployment topology, scaling knobs, and concrete resilience defaults (timeouts/retries/circuit breakers).
+      - For security, include at least 8 threats with mitigations and a clear authn/authz enforcement model.
+    - DIAGRAM REQUIREMENTS:
+      - Under Section 4 (Application Architecture), output a valid ```mermaid block for the Component Diagram that matches the modules/services you describe (UI, API/gateway, backend services/modules, AI orchestrator, DB, cache, external APIs).
+      - Under Section 10 (Infrastructure Architecture), output a valid ```mermaid block for the Deployment Diagram that shows environments or tiers, gateway/load balancer, app runtime (containers/serverless), databases, caches, queues, and external services.
+      - Use a single graph per block (`graph TD;` or `flowchart TD;`) and keep only node/edge definitions inside the block (no prose).
+    - PLACEMENT REQUIREMENTS:
+      - Put the endpoint catalog table under Section 8.
+      - Put the threat table under Section 9.
+      - Put the resilience defaults table under Section 10.
+      - Put the SLI/SLO table under Section 11 and include at least 6 filled rows.
+      - Put the ADR table under Section 12 and include at least 6 filled rows.
+    The final output MUST be a complete, self-contained markdown document following the same structure as the template, describing the technology, data, and deployment architecture in enough detail that a senior engineer could start designing services and APIs from it.
   expected_output: >
     A complete architecture.md document with all sections filled based on the project idea and product requirements. No placeholder text or empty sections.
   agent: architect_agent
   input: >
-    Use the following template and fill it based on the project idea and the context from the Product Owner. Template:
+    Use the following template and fill it based on the project idea and the detailed product requirements you read from 'output/product_requirements.md'. Template:
     {architecture_template}
   output_file: output/architecture.md
+  context:
+    - business_analyst_task
+  create_directory: true
+
+architect_review_task:
+  description: >
+    You are the Principal Architect Reviewer for the project. The project idea is: {project_idea}.
+    Your job is to review and IMPROVE the architecture produced by the Architect agent.
+
+    First, use FileReadTool to read the generated architecture file at 'output/architecture.md'.
+    Next, use FileReadTool to read these architecture skill references (knowledge pack) before rewriting:
+    - 'knowledge/ai-stack-playbook.md'
+    - 'knowledge/api-design-cookbook.md'
+    - 'knowledge/infra-resilience-defaults.md'
+    - 'knowledge/security-threat-checklist.md'
+    - 'knowledge/external-skills/api-design-patterns.md'
+    - 'knowledge/external-skills/deployment-patterns.md'
+    - 'knowledge/external-skills/database-migration-patterns.md'
+    - 'knowledge/external-skills/security-review-checklist.md'
+    Then produce an improved architecture document that keeps the exact same template headings/subheadings and structure, but:
+    - Removes generic prose and replaces it with concrete, implementable decisions.
+    - Do NOT remove any template tables. You must fill them in (add rows as needed) and keep the table headers unchanged.
+    - Ensure the endpoint catalog table, threat table, resilience defaults table, SLI/SLO table, and ADR table are present and filled.
+    - REQUIRED TABLES (must be real markdown tables, not inline code). Each must include the header row AND the separator row:
+      - Endpoint catalog:
+        | Domain | Endpoint | Method | Auth | Request (summary) | Response (summary) | Error shape |
+        |---|---|---|---|---|---|---|
+      - Threat table:
+        | Threat | Impact | Mitigation | Owner / control |
+        |---|---|---|---|
+      - Resilience defaults:
+        | Component | Timeout | Retries | Circuit breaker | Bulkhead/queue | Notes |
+        |---|---:|---:|---|---|---|
+      - SLI/SLO table:
+        | SLI | Target SLO | Window | Alert threshold | Notes |
+        |---|---|---|---|---|
+      - ADR table:
+        | ADR | Decision | Alternatives | Rationale | Consequences |
+        |---|---|---|---|---|
+    - Ensures every major capability names a specific technology/framework/service (with version where relevant).
+    - Ensures the AI / ML Framework and Stack section is fully filled for AI-centric projects: LLM provider+model, orchestration framework, embeddings+vector store, tool calling approach, safety, and cost/latency controls.
+    - Verifies internal consistency (tech choices match data/infrastructure choices; no contradictions).
+    - Adds missing details that an engineering team needs (API shapes, data entities, deployment, security, observability).
+
+    Use web search (Serper) ONLY when you need to confirm current stable versions or best-practice defaults for the named frameworks. If web search is not available, proceed with reasonable defaults and clearly specify versions you assume.
+
+    Output the complete improved markdown document as your response (do not output a diff).
+    OUTPUT METHOD (mandatory):
+    - Start by copying the full architecture template into your output verbatim (including all subheadings and all tables).
+    - Then rewrite/fill it in place using the architect output + requirements + knowledge pack.
+    - Do not delete template lines or table headers. Add rows where needed, but keep the structure intact.
+    HARD REQUIREMENT: Your final output MUST include EVERY section from the architecture template (all headings/sections), not just the early sections. If the architect output omitted any template sections, you must add them and fill them with concrete content.
+    REQUIRED HEADINGS (must appear verbatim, in this exact order):
+      1) ## 1. Document Overview
+      2) ## 2. System Context
+      3) ## 3. Solution Overview
+      4) ## 4. Application Architecture
+      5) ## 5. AI / ML Framework and Stack (required for AI-centric projects)
+      6) ## 6. Technology Architecture
+      7) ## 7. Data Architecture
+      8) ## 8. API and Integration Architecture
+      9) ## 9. Security Architecture
+      10) ## 10. Infrastructure Architecture
+      11) ## 11. Observability Architecture
+      12) ## 12. Quality Attributes and Architecture Decisions
+      13) ## 13. Development Guidance for Engineering Teams
+      14) ## 14. Suggested Delivery Breakdown for PM and Teams
+      15) ## 15. Open Risks and Architecture Concerns
+      16) ## 16. Appendices
+    - STYLE REQUIREMENTS (keep it tight and developer-usable):
+      - Prefer bullet lists and short tables over long prose. Avoid paragraphs longer than 4 lines.
+      - Each top-level section (##) must contain at least 6 non-trivial bullets or an equivalent amount of concrete content.
+      - Replace vague language with concrete decisions (named tech + defaults + versions where it matters).
+      - Expand weak sections until they meet the completeness bar (APIs, data, infra, security, observability).
+    - DIAGRAM REQUIREMENTS:
+      - Preserve and improve the Component Diagram in Section 4; ensure nodes and edges match the described modules and fix any invalid mermaid syntax.
+      - Preserve and improve the Deployment Diagram in Section 10; ensure it accurately reflects environments, gateway, app runtime, data stores, and key external dependencies, with valid mermaid syntax.
+    - PLACEMENT REQUIREMENTS:
+      - Put the endpoint catalog table under Section 8.
+      - Put the threat table under Section 9.
+      - Put the resilience defaults table under Section 10.
+      - Put the SLI/SLO table under Section 11 and include at least 6 filled rows.
+      - Put the ADR table under Section 12 and include at least 6 filled rows.
+  expected_output: >
+    A revised architecture document that is concrete, framework-specific, and internally consistent. No placeholder text or empty sections.
+  agent: architect_reviewer_agent
+  input: >
+    Review and improve the architecture in 'output/architecture.md'.
+    IMPORTANT: Use the following architecture template as the REQUIRED skeleton for your rewritten output. Preserve ALL headings, section order, and markdown structure from this template and fill every section. Template:
+    {architecture_template}
+  output_file: output/architecture_reviewed.md
+  context:
+    - architect_task
   create_directory: true
 
 project_plan_task:
   description: >
     You are the PM for the project. The project idea is: {project_idea}.
     You will receive the Product Owner's product requirements and the Architect's architecture document as context. Your task is to fill the phase plan template below with a clear project plan and roadmap based on the project idea and the context.
-    Replace all placeholders (e.g. project_name, phase_1_name and similar) and fill every section. Output the complete document as your response.
+        - Preserve ALL headings, section order, and markdown structure from the template.
+        - Replace all placeholders (e.g. project_name, phase_1_name and similar) and fill every section.
+        - Output the complete document as your response.
+        - Do not add any additional headings, sections, or markdown structure that is not in the template.
+        where the template says example content, you should replace it with the actual content based on the project idea, product requirements, and architecture.
+        The final output MUST be a complete, self-contained markdown document following the same structure as the template.
+  
   expected_output: >
     A complete project_plan.md document with all sections filled based on the project idea, product requirements, and architecture. No placeholder text or empty sections.
   agent: PM_agent
@@ -38,4 +238,8 @@ project_plan_task:
     Use the following template and fill it based on the project idea and the context from the Product Owner and Architect. Template:
     {phase_plan_template}
   output_file: output/project_plan.md
+  context:
+    - business_analyst_task
+    - architect_task
+    - architect_review_task
   create_directory: true

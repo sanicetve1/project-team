@@ -37,8 +37,8 @@ graph TD;
 - **LLM Provider:** OpenAI
 - **Model:** GPT-4
 - **Orchestration Framework:** LangChain
-- **Embedding Model & Vector Store:** N/A
-- **Tool Calling Approach:** LangChain tools
+- **Embedding Model & Vector Store:** Pinecone for embeddings and vector storage.
+- **Tool Calling Approach:** LangChain tools with a robust tool registry.
 - **Safety & Governance:** Prompt logging, moderation filters, cost controls per-user, latency and timeout configurations.
 
 ## 6. Technology Architecture
@@ -100,7 +100,7 @@ graph TD;
 | Component         | Timeout | Retries | Circuit breaker | Bulkhead/queue | Notes                              |
 |-------------------|---------:|--------:|-----------------|----------------|-------------------------------------|
 | Internal API      | 2s      | 2       | Enabled         | N/A           | For all internal service calls      |
-| External API      | 8s      | 2 (GET) | Disabled         | N/A           | Using circuit breaker on errors     |
+| External API      | 8s      | 2 (GET) | Enabled         | N/A           | Circuit breaker on server errors    |
 | LLM calls         | 60s     | 1       | Enabled         | N/A           | Backoff strategy enabled            |
 
 ## 11. Observability Architecture
@@ -147,7 +147,5 @@ graph TD;
 - **Appendix A:** Glossaries of Terms
 - **Appendix B:** Acronyms and Abbreviations
 - **Appendix C:** External Integrations and Reference APIs
-
---- 
 
 This architecture document presents an implementable framework for building an AI-powered travel planning assistant. It follows structured, technical guidelines ensuring all essential aspects are covered in the design, promoting a robust, scalable, and secure system.

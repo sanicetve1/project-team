@@ -17,9 +17,6 @@
 ### Purpose
 Describe the purpose of this document.
 
-Example:
-This document defines the target architecture for the application, covering application, infrastructure, data, security, and technology architecture. It serves as the primary technical reference for development teams and project planning teams.
-
 ### Scope
 Define what is included and excluded in this architecture.
 
@@ -42,29 +39,11 @@ Excluded:
 ### Business Context
 Summarize the business need this architecture supports.
 
-Example:
-The application enables gym members to log workouts, track history, and book classes digitally.
-
 ### Architecture Goals
 What this architecture is trying to achieve.
 
-Examples:
-- support MVP delivery quickly
-- ensure maintainability
-- support future scalability
-- provide secure user access
-- enable observability and operational support
-
 ### Architecture Drivers
 List the key forces shaping the design.
-
-Examples:
-- time to market
-- budget constraints
-- mobile-first experience
-- expected user growth
-- security requirements
-- cloud hosting preference
 
 ---
 
@@ -73,22 +52,29 @@ Examples:
 ### High-Level Architecture Summary
 Describe the overall architecture style.
 
-Example:
-The solution follows a modular monolith architecture for MVP, with clearly separated application modules and APIs. It is designed so specific modules can later be extracted into independent services if scaling or team structure requires it.
+Default guidance:
+- For most MVPs, prefer a well-structured **modular monolith** or a small number of coarse-grained services.
+- Defer a fine-grained microservices architecture until there are clear, project-specific reasons.
 
 ### Recommended Architecture Style
-Select one:
-- modular monolith
-- microservices
+Select one, and justify clearly:
+- modular monolith (default choice for MVP)
+- monolith + separate AI orchestration worker
+- small set of coarse-grained services
+- microservices (only if strongly justified)
 - serverless
 - event-driven
 - hybrid
 
 ### Architecture Rationale
-Explain why this architecture style was chosen.
+Explain why this architecture style was chosen for this specific project.
 
-Example:
-A modular monolith is recommended for the MVP because it reduces operational complexity while preserving clean separation of concerns. It also allows faster delivery compared to microservices.
+Guidance:
+- If you choose microservices, explain why a modular monolith is insufficient **for this AI product** (team size, scaling characteristics, regulatory separation, etc.) and call out the operational overhead.
+- If you choose a modular monolith, describe how you will keep clear module boundaries so future extraction is possible if needed.
+
+### Design Alternatives and Trade-offs
+Briefly describe at least one simpler alternative and why you did not choose it, and any risks of over-engineering or under-engineering.
 
 ---
 
@@ -96,15 +82,6 @@ A modular monolith is recommended for the MVP because it reduces operational com
 
 ### Functional Modules / Components
 List the major application components.
-
-Example:
-- Authentication Module
-- User Profile Module
-- Workout Module
-- Class Scheduling Module
-- Booking Module
-- Notification Module
-- Admin Module
 
 ### Responsibilities of Each Module
 
@@ -130,8 +107,19 @@ Responsibilities:
 ### Application Interaction Flow
 Describe how components interact.
 
-Example:
-Client App → API Layer → Application Services → Database
+### Component Diagram (required)
+Add a mermaid diagram showing the main runtime components (UI, gateway/API, backend services/modules, AI orchestrator, databases, caches, external APIs).
+
+```mermaid
+graph TD;
+    UI[User Interface] --> API[API Gateway / Backend];
+    API --> S1[Service / Module 1];
+    API --> S2[Service / Module 2];
+    S1 --> DB[(Primary Database)];
+    S2 --> Cache[(Cache)];
+    API --> AI[AI Orchestrator / LLM];
+    API --> EXT[External APIs];
+```
 
 ### Key Business Flows
 Document major flows.
@@ -152,32 +140,48 @@ Document major flows.
 ### Sequence Diagram Placeholder
 Describe sequence flow in text or reference separate diagram.
 
-Example:
-User → Mobile App → API → Booking Service → Database → Response
-
 ### Logical Architecture
 Describe logical layers.
-
-Example:
-- Presentation Layer
-- API Layer
-- Business Logic Layer
-- Data Access Layer
-- Persistence Layer
 
 ### Architecture Assertions
 Document decisions that developers must follow.
 
-Examples:
-- Business logic must not be implemented in controllers
-- All database access must go through repository/service layers
-- Modules must communicate through defined interfaces
-- Authentication must be centralized
-- Shared utility code must be minimized
+---
+
+## 5. AI / ML Framework and Stack (required for AI-centric projects)
+
+If the project is AI-based, fill this section with specific product and library names. Do not use generic phrases like "AI models" or "ML capabilities" without naming the actual technology.
+
+### LLM Provider and API
+- Primary LLM provider and model:
+- Fallback or secondary model (if any):
+- API client / SDK:
+
+### Orchestration and Application Framework
+- Framework for LLM orchestration, prompts, and tool use:
+- Version or minimum version:
+- How agents/chains/tools are defined:
+
+### Embeddings and Vector Store (if used)
+- Embedding model:
+- Vector database:
+- Use case:
+
+### Tool Integration
+- How external APIs are exposed to the LLM:
+- List specific tool names and which API or library they call:
+
+### Prompt and Safety
+- Where prompts are stored:
+- Safety or content filtering:
+- Rate limiting and cost controls for LLM calls:
+
+### AI Stack Rationale
+One or two sentences per major choice: why this LLM provider, why this orchestration framework, and why this vector store (if any).
 
 ---
 
-## 5. Technology Architecture
+## 6. Technology Architecture
 
 ### Recommended Technology Stack
 
@@ -210,30 +214,31 @@ Examples:
 ### Technology Selection Rationale
 Explain why each major technology was chosen.
 
-Example:
-Python FastAPI is recommended for rapid API development, clean structure, and ease of integration with future AI-based capabilities.
-
 ### Technology Constraints
-Examples:
-- must use PostgreSQL
-- must support Docker-based local development
-- must run in cloud-managed environment
+- Hard constraints (if any):
 
 ---
 
-## 6. Data Architecture
+## 7. Data Architecture
+
+Minimum required content:
+- List at least 10 entities (or all entities if fewer).
+- Provide 5–10 key fields for the top 5 entities.
+- Provide relationship cardinalities for key relationships.
 
 ### Core Data Entities
 List key entities.
 
-Example:
-- User
-- Membership
-- Workout
-- Exercise
-- Class
-- Booking
-- Trainer
+#### Top Entities (fields)
+Provide a table for the top 5 entities.
+
+| Entity | Key fields (5–10) | Primary key | Notes |
+|---|---|---|---|
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
 
 ### Entity Responsibilities
 Describe what each entity represents.
@@ -245,258 +250,240 @@ Represents a registered application user.
 Represents a workout session logged by a user.
 
 ### Entity Relationships
-Example:
-- User 1:N Workout
+- Relationships:
 - Class 1:N Booking
 - Trainer 1:N Class
 
 ### Data Ownership
 Define which module owns which data.
 
-Example:
-- Authentication Module owns user credentials
-- Workout Module owns workout records
-- Booking Module owns class reservations
-
 ### Data Lifecycle
 Describe how key data is created, updated, archived, or deleted.
 
-Example:
-Workout data is created by users, updated only before final save, and retained for historical tracking.
-
 ### Data Storage Strategy
-Examples:
-- transactional data stored in PostgreSQL
-- media files stored in object storage
-- cache stored in Redis
+- transactional store(s):
+- object/file store(s) (if any):
+- cache(s) (if any):
 
 ### Data Quality / Validation Rules
-Examples:
-- workout entries must reference valid user
-- bookings cannot exceed class capacity
-- only active members may create bookings
+- key validation rules:
 
 ### Data Retention and Archival
-Examples:
-- user activity retained for 24 months
-- deleted users anonymized after retention period
+- retention policy:
+- archival/deletion policy:
 
 ---
 
-## 7. API and Integration Architecture
+## 8. API and Integration Architecture
+
+Minimum required content:
+- At least 6 endpoints total across domains.
+- For at least 3 endpoints: include representative request/response JSON and error JSON shape.
+- List all external integrations with auth and rate-limit/failure handling.
 
 ### API Design Principles
-Examples:
-- RESTful endpoints
-- versioned APIs
-- consistent error model
-- stateless request handling
+- API style and conventions:
+- versioning approach:
+- error model:
+- idempotency approach (where relevant):
 
 ### Internal APIs / Service Interfaces
 List major API domains.
 
-Example:
-- /auth
-- /users
-- /workouts
-- /classes
-- /bookings
-- /admin
+#### Endpoint catalog
+| Domain | Endpoint | Method | Auth | Request (summary) | Response (summary) | Error shape |
+|---|---|---|---|---|---|---|
+|  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |
+
+#### Representative JSON (3+ endpoints)
+Provide request/response/error JSON for at least 3 endpoints (keep it concise).
 
 ### External Integrations
 List third-party systems if applicable.
-
-Examples:
-- payment gateway
-- notification provider
-- email service
-- analytics platform
+- integration list:
 
 ### Integration Patterns
-Examples:
-- synchronous REST for core flows
-- async messaging for notifications
-- webhooks for external callbacks
+- patterns used (sync/async/webhooks) and why:
 
 ### API Security
-Examples:
-- JWT bearer authentication
-- role-based access checks
-- input validation for all endpoints
+- authn/authz enforcement points:
+- input validation approach:
 
 ---
 
-## 8. Security Architecture
+## 9. Security Architecture
+
+Minimum required content:
+- Authn and authz model with enforcement points.
+- At least 8 threats with mitigations.
+- PII handling rules and audit events.
 
 ### Security Objectives
-Examples:
-- protect user data
-- secure authentication and authorization
-- protect APIs against abuse
-- ensure safe secrets handling
+- objectives:
 
 ### Authentication Strategy
-Examples:
-- OAuth2 / JWT
-- session-based auth
-- external identity provider
+- approach:
 
 ### Authorization Strategy
-Examples:
-- role-based access control
-- resource ownership checks
-- admin-only management endpoints
+- roles/permissions model:
+- enforcement approach:
 
 ### Secrets Management
-Examples:
-- store secrets in managed secrets vault
-- no hardcoded credentials
-- environment-specific secrets
+- secrets storage:
+- rotation policy:
 
 ### Data Protection
-Examples:
-- HTTPS only
-- encryption in transit
-- encryption at rest
-- password hashing
+- encryption in transit:
+- encryption at rest:
+- PII handling and retention:
+- credential storage/hashing:
 
 ### Secure Development Rules
-Examples:
-- validate all user input
-- parameterized database access only
-- no sensitive data in logs
-- least privilege for service accounts
+- input validation:
+- database access patterns:
+- logging/PII rules:
+- least privilege:
 
 ### Threat Considerations
-Examples:
-- unauthorized access
-- injection attacks
-- broken access control
-- API abuse
-- data leakage
+Provide a threat table.
+
+| Threat | Impact | Mitigation | Owner / control |
+|---|---|---|---|
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
+|  |  |  |  |
 
 ### Audit and Compliance Requirements
-Examples:
-- audit important admin actions
-- log authentication events
-- comply with internal security policy
+- audit events to record:
+- compliance requirements:
 
 ---
 
-## 9. Infrastructure Architecture
+## 10. Infrastructure Architecture
+
+Minimum required content:
+- Deployment topology (environments + runtime) and a deployment diagram (mermaid).
+- Concrete resilience defaults (timeouts, retries, circuit breakers) and scaling knobs.
+- RTO/RPO and backup/restore plan.
 
 ### Deployment Model
-Examples:
-- cloud-hosted
-- containerized deployment
-- serverless deployment
-- hybrid model
+- runtime model:
+- containerization approach:
+- release/rollback approach:
+
+### Deployment Diagram
+Add a mermaid diagram showing gateway, compute, data stores, queues, and external dependencies.
 
 ### Environment Strategy
 List environments.
-
-Example:
-- local
-- development
-- test
-- staging
-- production
+- local:
+- dev:
+- staging:
+- prod:
 
 ### Infrastructure Components
-Examples:
-- frontend hosting
-- API runtime
-- database
-- cache
-- load balancer
-- object storage
+- frontend hosting:
+- API runtime:
+- database:
+- cache:
+- load balancer / gateway:
+- object storage (if any):
 
 ### Network Architecture
 Describe major network boundaries.
-
-Example:
-- public access only through API gateway / load balancer
-- database in private subnet
-- admin endpoints protected
+- ingress/egress boundaries:
+- private/public subnets (if any):
+- admin access controls:
 
 ### Scalability Strategy
-Examples:
-- horizontal scaling for API layer
-- read replicas for database if needed
-- cache for high-read workloads
+- scaling approach by tier:
 
 ### Reliability Strategy
-Examples:
-- health checks
-- auto restart
-- backup and restore
-- retry policies
-- graceful degradation
+- health checks:
+- retries/timeouts:
+- graceful degradation:
+- backup/restore:
+
+#### Resilience defaults (fill in)
+| Component | Timeout | Retries | Circuit breaker | Bulkhead/queue | Notes |
+|---|---:|---:|---|---|---|
+| API calls to external providers |  |  |  |  |  |
+| Internal service calls |  |  |  |  |  |
+| DB operations |  |  |  |  |  |
 
 ### Availability Targets
-Examples:
-- target uptime 99.9%
-- critical APIs must recover within defined SLA
+- availability target(s):
+- RTO/RPO:
 
 ### Backup and Recovery
-Examples:
-- daily database backup
-- point-in-time restore
-- periodic recovery testing
+- backup cadence:
+- restore approach:
+- recovery testing plan:
 
 ### Cost Considerations
-Examples:
-- prefer managed services for MVP
-- avoid premature microservices
-- optimize for low operational overhead initially
+- major cost drivers:
+- cost controls:
 
 ---
 
-## 10. Observability Architecture
+## 11. Observability Architecture
+
+Minimum required content:
+- SLIs/SLOs (at least 6) and dashboards.
+- Trace/log correlation strategy and PII-safe logging rules.
+- Alerts for customer-impacting failure modes.
 
 ### Logging Strategy
-Examples:
-- structured logs
-- correlation IDs
-- centralized log aggregation
+- log format/structure:
+- correlation/trace IDs:
+- log storage and retention:
 
 ### Metrics Strategy
-Examples:
-- API latency
-- request volume
-- error rate
-- active users
-- booking success rate
+- key SLIs:
+- SLO targets:
+- dashboards:
+
+#### SLI/SLO table
+| SLI | Target SLO | Window | Alert threshold | Notes |
+|---|---|---|---|---|
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
 
 ### Tracing Strategy
-Examples:
-- distributed tracing for request path
-- trace IDs propagated across components
+- tracing approach:
+- context propagation:
 
 ### Alerting Strategy
-Examples:
-- high error rate
-- slow response times
-- failed deployments
-- infrastructure health issues
+- critical alerts:
+- escalation policy:
 
 ### Monitoring Tools
-Examples:
-- Prometheus
-- Grafana
-- CloudWatch
-- Sentry
-- OpenTelemetry
+- tools used:
 
 ### Operational Dashboards
-Examples:
-- API health dashboard
-- business KPI dashboard
-- infrastructure dashboard
+- dashboards to maintain:
 
 ---
 
-## 11. Quality Attributes and Architecture Decisions
+## 12. Quality Attributes and Architecture Decisions
+
+Minimum required content:
+- Targets for performance/reliability/security/cost/maintainability.
+- 6–12 ADRs with decision + alternatives + rationale + consequences.
 
 ### Scalability
 How the architecture supports growth.
@@ -518,92 +505,66 @@ How security is built into the solution.
 
 ### Trade-Offs
 Document important trade-offs.
+- trade-offs and consequences:
 
-Example:
-A modular monolith reduces operational overhead but may require future decomposition if team size and scale increase.
+### Architecture Decisions (ADRs)
+| ADR | Decision | Alternatives | Rationale | Consequences |
+|---|---|---|---|---|
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
+|  |  |  |  |  |
 
 ---
 
-## 12. Development Guidance for Engineering Teams
+## 13. Development Guidance for Engineering Teams
 
 ### Engineering Principles
-Examples:
-- keep modules loosely coupled
-- separate business logic from transport layer
-- design APIs contract-first
-- write migration scripts for schema changes
+- principles:
 
 ### Coding Standards Guidance
-Examples:
-- consistent naming
-- layered architecture
-- standardized error handling
-- test coverage for service logic
+- standards:
 
 ### Module Boundaries
 Explain what should remain isolated.
 
 ### Reuse Guidelines
-Examples:
-- reuse shared utilities carefully
-- avoid central dumping-ground libraries
+- reuse rules:
 
 ### Definition of Done (Technical)
-Examples:
-- feature implemented
-- tests added
-- API documented
-- logs and metrics added
-- security checks passed
+- DoD checklist:
 
 ---
 
-## 13. Suggested Delivery Breakdown for PM and Teams
+## 14. Suggested Delivery Breakdown for PM and Teams
 
 ### Recommended Delivery Phases
-Example:
-- Phase 1: Core foundation
-- Phase 2: Primary business workflows
-- Phase 3: Admin and reporting
-- Phase 4: optimization and scale features
+- phases:
 
 ### Suggested MVP Build Order
-Examples:
-1. Authentication
-2. Core data model
-3. Primary transaction workflow
-4. Basic reporting / history
-5. Admin controls
+- build order:
 
 ### Dependency Notes
-Examples:
-- authentication required before user-owned data flows
-- booking depends on class and membership data model
+- dependencies:
 
 ---
 
-## 14. Open Risks and Architecture Concerns
+## 15. Open Risks and Architecture Concerns
 
 ### Known Risks
-Examples:
-- future reporting may strain transactional DB
-- notification volume may require async processing
-- security complexity may increase with admin roles
+- risks (risk -> impact -> mitigation -> owner):
 
 ### Assumptions
-Examples:
-- user growth remains within MVP target range
-- system initially supports one region
+- assumptions:
 
 ### Open Questions
-Examples:
-- should notifications be synchronous or async in MVP?
-- do we need multi-tenancy in future?
-- what level of auditability is required?
+- open questions:
 
 ---
 
-## 15. Appendices
+## 16. Appendices
 
 ### Glossary
 Define important terms.
@@ -616,8 +577,4 @@ List referenced diagrams:
 - deployment diagram
 
 ### Related Documents
-Examples:
-- product_requirements.md
-- api_spec.md
-- data_model.md
-- phase_plan.md
+- related docs:
