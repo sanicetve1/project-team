@@ -26,13 +26,61 @@ class Projectteam():
         )
 
     @agent
-    def architect_agent(self) -> Agent:
+    def application_architect_agent(self) -> Agent:
         tools = [FileReadTool()]
         if os.getenv("SERPER_API_KEY"):
             tools.append(SerperDevTool())
         return Agent(
-            config=self.agents_config['architect_agent'], # type: ignore[index]
-            name='Architect',
+            config=self.agents_config['application_architect_agent'], # type: ignore[index]
+            name='Application Architect',
+            verbose=True,
+            tools=tools,
+        )
+
+    @agent
+    def data_architect_agent(self) -> Agent:
+        tools = [FileReadTool()]
+        if os.getenv("SERPER_API_KEY"):
+            tools.append(SerperDevTool())
+        return Agent(
+            config=self.agents_config['data_architect_agent'], # type: ignore[index]
+            name='Data Architect',
+            verbose=True,
+            tools=tools,
+        )
+
+    @agent
+    def infra_architect_agent(self) -> Agent:
+        tools = [FileReadTool()]
+        if os.getenv("SERPER_API_KEY"):
+            tools.append(SerperDevTool())
+        return Agent(
+            config=self.agents_config['infra_architect_agent'], # type: ignore[index]
+            name='Infrastructure Architect',
+            verbose=True,
+            tools=tools,
+        )
+
+    @agent
+    def security_architect_agent(self) -> Agent:
+        tools = [FileReadTool()]
+        if os.getenv("SERPER_API_KEY"):
+            tools.append(SerperDevTool())
+        return Agent(
+            config=self.agents_config['security_architect_agent'], # type: ignore[index]
+            name='Security Architect',
+            verbose=True,
+            tools=tools,
+        )
+
+    @agent
+    def architecture_assembler_agent(self) -> Agent:
+        tools = [FileReadTool()]
+        if os.getenv("SERPER_API_KEY"):
+            tools.append(SerperDevTool())
+        return Agent(
+            config=self.agents_config['architecture_assembler_agent'], # type: ignore[index]
+            name='Architecture Assembler',
             verbose=True,
             tools=tools,
         )
@@ -71,9 +119,33 @@ class Projectteam():
         )
 
     @task
-    def architect_task(self) -> Task:
+    def application_architect_spec_task(self) -> Task:
         return Task(
-            config=self.tasks_config['architect_task'], # type: ignore[index]
+            config=self.tasks_config['application_architect_spec_task'], # type: ignore[index]
+        )
+
+    @task
+    def data_architect_spec_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['data_architect_spec_task'], # type: ignore[index]
+        )
+
+    @task
+    def infra_architect_spec_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['infra_architect_spec_task'], # type: ignore[index]
+        )
+
+    @task
+    def security_architect_spec_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['security_architect_spec_task'], # type: ignore[index]
+        )
+
+    @task
+    def architecture_assembler_task(self) -> Task:
+        return Task(
+            config=self.tasks_config['architecture_assembler_task'], # type: ignore[index]
         )
 
     @task

@@ -120,21 +120,209 @@ architect_task:
     The final output MUST be a complete, self-contained markdown document following the same structure as the template, describing the technology, data, and deployment architecture in enough detail that a senior engineer could start designing services and APIs from it.
   expected_output: >
     A complete architecture.md document with all sections filled based on the project idea and product requirements. No placeholder text or empty sections.
-  agent: architect_agent
+  agent: application_architect_agent
   input: >
     Use the following template and fill it based on the project idea and the detailed product requirements you read from 'output/product_requirements.md'. Template:
     {architecture_template}
-  output_file: output/architecture.md
+  output_file: output/_disabled_architect_task.md
   context:
     - business_analyst_task
   create_directory: true
 
+application_architect_spec_task:
+  description: >
+    You are the Application Architect. Project idea: {project_idea}.
+    You will receive the Business Analyst product requirements (context).
+    Produce a spec file that contains ONLY:
+    - `## 4. Application Architecture`
+    - `## 8. API and Integration Architecture`
+    Copy those sections verbatim from `{architecture_template}`, then fill all bullet slots and tables.
+
+    MUST include a valid mermaid `Component Diagram` inside the Section 4 area (single graph, valid syntax, no prose inside the mermaid block).
+    MUST include the endpoint catalog table (the markdown table with headers + separator row) inside Section 8.
+    MUST include representative JSON request/response/error shapes for at least 3 endpoints.
+    MUST ensure auth expectations in endpoints match the security model (authn/authz method + enforcement points) implied by the requirements.
+
+    First, use FileReadTool to read these knowledge files before writing:
+    - 'knowledge/api-design-cookbook.md'
+    - 'knowledge/ai-stack-playbook.md'
+    - 'knowledge/external-skills/api-design-patterns.md'
+    - 'knowledge/mermaid-diagram-standards.md'
+
+    Output plain markdown only.
+    - Your first non-empty characters must start with `## 4. Application Architecture` (never start with ``` or ```markdown).
+    - Do NOT wrap the whole response in triple backticks; only mermaid fences are allowed.
+  expected_output: >
+    Spec markdown for Section 4 and Section 8 only; no other sections.
+  agent: application_architect_agent
+  input: >
+    Product requirements:
+    (from context)
+
+    Architecture template:
+    {architecture_template}
+  output_file: output/spec_application.md
+  create_directory: true
+  context:
+    - business_analyst_task
+
+data_architect_spec_task:
+  description: >
+    You are the Data Architect. Project idea: {project_idea}.
+    Produce a spec file that contains ONLY `## 7. Data Architecture`.
+    Copy that section verbatim from `{architecture_template}`, then fill all bullet slots and tables.
+
+    MUST include:
+    - at least 10 entities (or all entities if fewer)
+    - a filled top-5 entities fields table
+    - relationship cardinalities
+    - data lifecycle, storage strategy, validation rules
+
+    First, use FileReadTool to read these knowledge files before writing:
+    - 'knowledge/ai-stack-playbook.md'
+    - 'knowledge/infra-resilience-defaults.md'
+    - 'knowledge/external-skills/database-migration-patterns.md'
+    - 'knowledge/data-modeling-cookbook.md'
+
+    Output plain markdown only.
+    - Your first non-empty characters must start with `## 7. Data Architecture` (never start with ``` or ```markdown).
+    - Do NOT wrap the whole response in triple backticks; only mermaid fences are allowed.
+  expected_output: >
+    Spec markdown for Section 7 only; no other sections.
+  agent: data_architect_agent
+  input: >
+    Product requirements:
+    (from context)
+
+    Architecture template:
+    {architecture_template}
+  output_file: output/spec_data.md
+  create_directory: true
+  context:
+    - business_analyst_task
+
+infra_architect_spec_task:
+  description: >
+    You are the Infrastructure Architect. Project idea: {project_idea}.
+    Produce a spec file that contains ONLY:
+    - `## 10. Infrastructure Architecture`
+    - `## 11. Observability Architecture`
+    Copy those sections verbatim from `{architecture_template}`, then fill all bullet slots and tables.
+
+    MUST include:
+    - valid mermaid `Deployment Diagram` inside Section 10 (single graph, no prose inside mermaid block)
+    - filled resilience defaults table
+    - filled SLI/SLO table with at least 6 rows
+    - log/trace/metric correlation strategy
+
+    First, use FileReadTool to read these knowledge files before writing:
+    - 'knowledge/infra-resilience-defaults.md'
+    - 'knowledge/external-skills/deployment-patterns.md'
+    - 'knowledge/mermaid-diagram-standards.md'
+
+    Output plain markdown only.
+    - Your first non-empty characters must start with `## 10. Infrastructure Architecture` (never start with ``` or ```markdown).
+    - Do NOT wrap the whole response in triple backticks; only mermaid fences are allowed.
+  expected_output: >
+    Spec markdown for Sections 10 and 11 only; no other sections.
+  agent: infra_architect_agent
+  input: >
+    Product requirements:
+    (from context)
+
+    Architecture template:
+    {architecture_template}
+  output_file: output/spec_infra.md
+  create_directory: true
+  context:
+    - business_analyst_task
+
+security_architect_spec_task:
+  description: >
+    You are the Security Architect. Project idea: {project_idea}.
+    Produce a spec file that contains ONLY `## 9. Security Architecture`.
+    Copy that section verbatim from `{architecture_template}`, then fill all bullet slots and tables.
+
+    MUST include:
+    - authn/authz model with enforcement points
+    - threat table with at least 8 rows and specific mitigations
+    - data protection rules (encryption/PII/retention)
+
+    First, use FileReadTool to read these knowledge files before writing:
+    - 'knowledge/security-threat-checklist.md'
+    - 'knowledge/external-skills/security-review-checklist.md'
+    
+    Output plain markdown only.
+    - Your first non-empty characters must start with `## 9. Security Architecture` (never start with ``` or ```markdown).
+    - Do NOT wrap the whole response in triple backticks; only mermaid fences are allowed.
+  expected_output: >
+    Spec markdown for Section 9 only; no other sections.
+  agent: security_architect_agent
+  input: >
+    Product requirements:
+    (from context)
+
+    Architecture template:
+    {architecture_template}
+  output_file: output/spec_security.md
+  create_directory: true
+  context:
+    - business_analyst_task
+
+architecture_assembler_task:
+  description: >
+    You are the Architecture Assembler. Project idea: {project_idea}.
+    Build the final `architecture.md` from the full template `{architecture_template}`.
+
+    Hard rules (avoid loops):
+    - Do this exactly once: assemble then stop.
+    - Do NOT request more iterations.
+    - If any specialist specs conflict, choose the most internally consistent set and record assumptions in the relevant sections.
+
+    Inputs you must read:
+    - output/spec_application.md
+    - output/spec_data.md
+    - output/spec_infra.md
+    - output/spec_security.md
+    
+    Also read these architecture knowledge files before assembling:
+    - 'knowledge/architecture-assembly-rubric.md'
+    - 'knowledge/mermaid-diagram-standards.md'
+
+    Fill ALL remaining sections (1–3,5–6,12–16) in the template in a technically concrete way, including:
+    - AI / ML Framework and Stack (Section 5) with specific LLM/orchestration/embeddings/vector store + safety/cost/latency
+    - Technology Architecture (Section 6)
+    - Quality Attributes / ADR table (Section 12)
+    - Development Guidance, Delivery Breakdown, Risks, Appendices
+
+    Ensure mermaid diagrams are present and syntactically valid:
+    - Component Diagram (Section 4)
+    - Deployment Diagram (Section 10)
+  expected_output: >
+    A complete fully filled architecture.md matching the template headings and sections.
+    
+    Output rules:
+    - Your first non-empty characters must start with `## 1. Document Overview` (never start with ``` or ```markdown).
+    - Do NOT wrap the whole response in triple backticks; only mermaid fences are allowed.
+  agent: architecture_assembler_agent
+  input: >
+    Architecture template:
+    {architecture_template}
+  output_file: output/architecture_draft.md
+  create_directory: true
+  context:
+    - application_architect_spec_task
+    - data_architect_spec_task
+    - infra_architect_spec_task
+    - security_architect_spec_task
+
 architect_review_task:
   description: >
     You are the Principal Architect Reviewer for the project. The project idea is: {project_idea}.
-    Your job is to review and IMPROVE the architecture produced by the Architect agent.
+    Your job is to review and IMPROVE `output/architecture_draft.md`.
+    In any disagreement between specs or missing details, you take the final call and overwrite the architecture.
 
-    First, use FileReadTool to read the generated architecture file at 'output/architecture.md'.
+    First, use FileReadTool to read the generated architecture file at 'output/architecture_draft.md'.
     Next, use FileReadTool to read these architecture skill references (knowledge pack) before rewriting:
     - 'knowledge/ai-stack-playbook.md'
     - 'knowledge/api-design-cookbook.md'
@@ -144,6 +332,8 @@ architect_review_task:
     - 'knowledge/external-skills/deployment-patterns.md'
     - 'knowledge/external-skills/database-migration-patterns.md'
     - 'knowledge/external-skills/security-review-checklist.md'
+    - 'knowledge/architecture-assembly-rubric.md'
+    - 'knowledge/mermaid-diagram-standards.md'
     Then produce an improved architecture document that keeps the exact same template headings/subheadings and structure, but:
     - Removes generic prose and replaces it with concrete, implementable decisions.
     - Do NOT remove any template tables. You must fill them in (add rows as needed) and keep the table headers unchanged.
@@ -210,14 +400,18 @@ architect_review_task:
       - Put the ADR table under Section 12 and include at least 6 filled rows.
   expected_output: >
     A revised architecture document that is concrete, framework-specific, and internally consistent. No placeholder text or empty sections.
+    
+    Output rules:
+    - Your first non-empty characters must start with `## 1. Document Overview` (never start with ``` or ```markdown).
+    - Do NOT wrap the whole response in triple backticks; only mermaid fences are allowed.
   agent: architect_reviewer_agent
   input: >
-    Review and improve the architecture in 'output/architecture.md'.
+    Review and improve the architecture in 'output/architecture_draft.md'. Overwrite the final architecture.
     IMPORTANT: Use the following architecture template as the REQUIRED skeleton for your rewritten output. Preserve ALL headings, section order, and markdown structure from this template and fill every section. Template:
     {architecture_template}
-  output_file: output/architecture_reviewed.md
+  output_file: output/architecture.md
   context:
-    - architect_task
+    - architecture_assembler_task
   create_directory: true
 
 project_plan_task:
@@ -240,6 +434,5 @@ project_plan_task:
   output_file: output/project_plan.md
   context:
     - business_analyst_task
-    - architect_task
     - architect_review_task
   create_directory: true
